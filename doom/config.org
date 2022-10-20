@@ -1,0 +1,151 @@
+#+TITLE: Config
+#+AUTHOR: chodkows
+#+PROPERTY: header-args :tangle config.el
+#+auto_tangle: t
+#+STARTUP: showeverything
+
+* Config
+** Default
+$DOOMDIR/config.el -*- lexical-binding: t; -*-
+
+Place your private configuration here! Remember, you do not need to run 'doom
+sync' after modifying this file!
+
+
+Some functionality uses this to identify you, e.g. GPG configuration, email
+clients, file templates and snippets.
+
+#+begin_src emacs-lisp
+(setq user-full-name "John Doe"
+      user-mail-address "john@doe.com")
+#+end_src
+
+Doom exposes five (optional) variables for controlling fonts in Doom. Here
+are the three important ones:
+
++ `doom-font'
++ `doom-variable-pitch-font'
++ `doom-big-font' -- used for `doom-big-font-mode'; use this for
+  presentations or streaming.
+
+They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
+font string. You generally only need these two:
+(setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "sans" :size 13))
+
+There are two ways to load a theme. Both assume the theme is installed and
+available. You can either set `doom-theme' or manually load a theme with the
+`load-theme' function. This is the default:
+setq doom-theme 'doom-earl-grey)
+
+If you use `org' and don't want your org files in the default location below,
+change `org-directory'. It must be set before org loads!
+
+#+begin_src emacs-lisp
+(setq org-directory "~/git/notes/")
+#+end_src
+
+This determines the style of line numbers in effect. If set to `nil', line
+numbers are disabled. For relative line numbers, set this to `relative'.
+
+#+begin_src emacs-lisp
+(setq display-line-numbers-type t)
+#+end_src
+
+Here are some additional functions/macros that could help you configure Doom:
+
+- `load!' for loading external *.el files relative to this one
+- `use-package!' for configuring packages
+- `after!' for running code after a package has loaded
+- `add-load-path!' for adding directories to the `load-path', relative to
+  this file. Emacs searches the `load-path' when you load packages with
+  `require' or `use-package'.
+- `map!' for binding new keys
+
+To get information about any of these functions/macros, move the cursor over
+the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
+This will open documentation for it, including demos of how they are used.
+
+You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
+they are implemented.
+
+** Emacs opacity
+
+#+begin_src emacs-lisp
+(set-frame-parameter (selected-frame) 'alpha '(95 95))
+(use-package org-tree-slide
+  :custom
+  (org-image-actual-width nil))
+#+end_src
+
+** Org-auto-tangle
+
+#+begin_src emacs-lisp
+(use-package! org-auto-tangle
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
+#+end_src
+
+* Packages
+** Default
+
+-*- no-byte-compile: t; -*-
+$DOOMDIR/packages.el
+
+To install a package with Doom you must declare them here and run 'doom sync'
+on the command line, then restart Emacs for the changes to take effect -- or
+use 'M-x doom/reload'.
+
+
+To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
+(package! some-package)
+
+To install a package directly from a remote git repo, you must specify a
+`:recipe'. You'll find documentation on what `:recipe' accepts here:
+https://github.com/raxod502/straight.el#the-recipe-format
+(package! another-package
+:recipe (:host github :repo "username/repo"))
+
+If the package you are trying to install does not contain a PACKAGENAME.el
+file, or is located in a subdirectory of the repo, you'll need to specify
+`:files' in the `:recipe':
+(package! this-package
+  :recipe (:host github :repo "username/repo"
+           :files ("some-file.el" "src/lisp/*.el")))
+
+If you'd like to disable a package included with Doom, you can do so here
+with the `:disable' property:
+(package! builtin-package :disable t)
+
+You can override the recipe of a built in package without having to specify
+all the properties for `:recipe'. These will inherit the rest of its recipe
+from Doom or MELPA/ELPA/Emacsmirror:
+(package! builtin-package :recipe (:nonrecursive t))
+(package! builtin-package-2 :recipe (:repo "myfork/package"))
+
+Specify a `:branch' to install a package from a particular branch or tag.
+This is required for some packages whose default branch isn't 'master' (which
+our package manager can't deal with; see raxod502/straight.el#279)
+(package! builtin-package :recipe (:branch "develop"))
+
+Use `:pin' to specify a particular commit to install.
+(package! builtin-package :pin "1a2b3c4d5e")
+
+
+Doom's packages are pinned to a specific commit and updated from release to
+release. The `unpin!' macro allows you to unpin single packages...
+(unpin! pinned-package)
+...or multiple packages
+(unpin! pinned-package another-pinned-package)
+...Or *all* packages (NOT RECOMMENDED; will likely break things)
+(unpin! t)
+
+** Custom packages
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! kubernetes)
+(package! kubernetes-evil)
+(package! org-auto-tangle)
+#+end_src
